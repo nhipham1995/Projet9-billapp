@@ -7,14 +7,11 @@ export default class {
 		this.document = document;
 		this.onNavigate = onNavigate;
 		this.store = store;
-		this.handleClickIconEye = this.handleClickIconEye.bind(this);
-		this.addClickListeners();
+
 		const buttonNewBill = document.querySelector(
 			`button[data-testid="btn-new-bill"]`
 		);
-		// const modaleFile = document.querySelector(
-		// 	`button[data-testid="modal-file"]`
-		// );
+
 		if (buttonNewBill)
 			buttonNewBill.addEventListener("click", this.handleClickNewBill);
 		const iconEye = document.querySelectorAll(
@@ -33,16 +30,6 @@ export default class {
 	handleClickNewBill = () => {
 		this.onNavigate(ROUTES_PATH["NewBill"]);
 	};
-	addClickListeners() {
-		const iconEyeElements = document.querySelectorAll(
-			`div[data-testid="icon-eye"]`
-		);
-		if (iconEyeElements) {
-			iconEyeElements.forEach((icon) => {
-				icon.addEventListener("click", this.handleClickIconEye);
-			});
-		}
-	}
 
 	handleClickIconEye = (icon) => {
 		const billUrl = icon.getAttribute("data-bill-url");
@@ -52,18 +39,12 @@ export default class {
 			.html(
 				`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill" /></div>`
 			);
-		$("#modaleFile").modal("show");
+		if (typeof $("#modaleFileAdmin1").modal === "function")
+			$("#modaleFile").modal("show");
 	};
 
 	/* istanbul ignore next */
 	getBills = () => {
-		// const formattedDate = (date) => {
-		// 	if (typeof jest !== "undefined") {
-		// 		return formatDate(bill.date);
-		// 	} else {
-		// 		return bill.date;
-		// 	}
-		// };
 		if (this.store) {
 			return this.store
 				.bills()

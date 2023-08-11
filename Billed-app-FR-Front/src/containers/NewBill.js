@@ -27,10 +27,11 @@ export default class NewBill {
 		const filePath = e.target.value.split(/\\/g);
 		const fileName = filePath[filePath.length - 1];
 		const formData = new FormData();
-		console.log(localStorage.getItem("user"));
 		const email = JSON.parse(localStorage.getItem("user")).email;
 		formData.append("file", file);
 		formData.append("email", email);
+
+		/* istanbul ignore next */
 
 		this.store
 			.bills()
@@ -41,7 +42,6 @@ export default class NewBill {
 				},
 			})
 			.then(({ fileUrl, key }) => {
-				console.log(fileUrl);
 				this.billId = key;
 				this.fileUrl = fileUrl;
 				this.fileName = fileName;
@@ -50,10 +50,7 @@ export default class NewBill {
 	};
 	handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(
-			'e.target.querySelector(`input[data-testid="datepicker"]`).value',
-			e.target.querySelector(`input[data-testid="datepicker"]`).value
-		);
+
 		const email = JSON.parse(localStorage.getItem("user")).email;
 		const bill = {
 			email,
