@@ -10,26 +10,34 @@ export default class NewBill {
 			`form[data-testid="form-new-bill"]`
 		);
 		formNewBill.addEventListener("submit", this.handleSubmit);
-		const file = this.document.querySelector(`input[data-testid="file"]`);
-		file.addEventListener("change", this.handleChangeFile);
+
+		const fileInput = this.document.querySelector(
+			`input[data-testid="file-input"]`
+		);
+		fileInput.addEventListener("change", this.handleChangeInput);
 		this.fileUrl = null;
 		this.fileName = null;
 		this.billId = null;
 		new Logout({ document, localStorage, onNavigate });
 	}
-	handleChangeFile = (e) => {
+
+	handleChangeInput = (e) => {
+		console.log("hello");
 		e.preventDefault();
-		const file = this.document.querySelector(`input[data-testid="file"]`)
-			.files[0];
+		const file = this.document.querySelector(
+			`input[data-testid="file-input"]`
+		).files[0];
 		const fileExtension = e.target.files[0].type;
 		if (!["image/jpg", "image/jpeg", "image/png"].includes(fileExtension))
 			return alert("Only accept file jpg, jpeg or png");
 		const filePath = e.target.value.split(/\\/g);
 		const fileName = filePath[filePath.length - 1];
 		const formData = new FormData();
-		const email = JSON.parse(localStorage.getItem("user")).email;
 		formData.append("file", file);
-		formData.append("email", email);
+		formData.append(
+			"email",
+			JSON.parse(localStorage.getItem("user")).email
+		);
 
 		/* istanbul ignore next */
 
