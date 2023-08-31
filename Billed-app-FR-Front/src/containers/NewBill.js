@@ -22,7 +22,6 @@ export default class NewBill {
 	}
 
 	handleChangeInput = (e) => {
-		console.log("hello");
 		e.preventDefault();
 		const file = this.document.querySelector(
 			`input[data-testid="file-input"]`
@@ -54,7 +53,10 @@ export default class NewBill {
 				this.fileUrl = fileUrl;
 				this.fileName = fileName;
 			})
-			.catch((error) => console.error(error));
+			// .catch((error) => console.error(error));
+			.catch((error) => {
+				throw error;
+			});
 	};
 	handleSubmit = (e) => {
 		e.preventDefault();
@@ -91,13 +93,13 @@ export default class NewBill {
 	/* istanbul ignore next */
 	updateBill = (bill) => {
 		if (this.store) {
-			this.store
+			return this.store
 				.bills()
 				.update({ data: JSON.stringify(bill), selector: this.billId })
 				.then(() => {
 					this.onNavigate(ROUTES_PATH["Bills"]);
 				})
-				.catch((error) => console.error(error));
+				.catch(console.log);
 		}
 	};
 }
