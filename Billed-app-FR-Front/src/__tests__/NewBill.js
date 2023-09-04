@@ -6,7 +6,7 @@ import { screen, fireEvent, waitFor } from "@testing-library/dom";
 
 import { ROUTES, ROUTES_PATH } from "../constants/routes";
 import { localStorageMock } from "../__mocks__/localStorage.js";
-import mockStore from "../__mocks__/store";
+import mockStore from "../__mocks__/store.js";
 import { bills } from "../fixtures/bills";
 import router from "../app/Router";
 import NewBill from "../containers/NewBill.js";
@@ -167,6 +167,7 @@ describe("Given I am a user connected as an employee ", function () {
 		await waitFor(() => screen.getByText("Mes notes de frais"));
 
 		expect(screen.getByText("Mes notes de frais")).toBeTruthy();
+
 		spy.mockRestore();
 	});
 	describe("When an error occurs on API", () => {
@@ -188,31 +189,45 @@ describe("Given I am a user connected as an employee ", function () {
 			router();
 		});
 		test("fetches bills from an API and fails with 404 message error", async () => {
+			console.error = jest.fn();
+			window.onNavigate(ROUTES_PATH.NewBill);
+
+			const form = screen.getByTestId("form-new-bill");
+			const handleSubmit = jest.fn(() => NewBill.handleSubmit);
+
 			mockStore.bills.mockImplementationOnce(() => {
 				return {
-					list: () => {
+					update: () => {
 						return Promise.reject(new Error("Erreur 404"));
 					},
 				};
 			});
+			form.addEventListener("submit", handleSubmit);
+			fireEvent.submit(form);
+			expect(handleSubmit).toHaveBeenCalled();
 			window.onNavigate(ROUTES_PATH.Bills);
 			await new Promise(process.nextTick);
-			const message = await screen.getByText(/Erreur 404/);
-			expect(message).toBeTruthy();
+			expect(console.error).toHaveBeenCalledWith(new Error("Erreur 404"));
 		});
 		test("fetches messages from an API and fails with 500 message error", async () => {
+			console.error = jest.fn();
+			window.onNavigate(ROUTES_PATH.NewBill);
+			const form = screen.getByTestId("form-new-bill");
+			const handleSubmit = jest.fn(() => NewBill.handleSubmit);
+
 			mockStore.bills.mockImplementationOnce(() => {
 				return {
-					list: () => {
+					update: () => {
 						return Promise.reject(new Error("Erreur 500"));
 					},
 				};
 			});
-
+			form.addEventListener("submit", handleSubmit);
+			fireEvent.submit(form);
+			expect(handleSubmit).toHaveBeenCalled();
 			window.onNavigate(ROUTES_PATH.Bills);
 			await new Promise(process.nextTick);
-			const message = await screen.getByText(/Erreur 500/);
-			expect(message).toBeTruthy();
+			expect(console.error).toHaveBeenCalledWith(new Error("Erreur 500"));
 		});
 	});
 });
